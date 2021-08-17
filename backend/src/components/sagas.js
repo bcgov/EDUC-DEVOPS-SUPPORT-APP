@@ -16,7 +16,7 @@ async function getSagas(req, res) {
     let searchQueries = JSON.parse(req.query.searchCriteriaList);
 
     Object.keys(searchQueries).forEach(element => {
-      //if(!searchQueries[element] || (Array.isArray(searchQueries[element]) && Object.keys(searchQueries[element]).length === 0)) return; //do not add to search if null value
+      if(!searchQueries[element] || (Array.isArray(searchQueries[element]) && Object.keys(searchQueries[element]).length === 0)) return; //do not add to search if null value
       let operation = FILTER_OPERATION.IN;
       let valueType = VALUE_TYPE.STRING;
 
@@ -47,6 +47,7 @@ async function getSagas(req, res) {
         case 'sagaName':
         case 'sagaState':
         default:
+          if(Object.keys(searchQueries[element]).length === 0) return;
           searchQueries[element] = searchQueries[element].join(',');
           break;
       }

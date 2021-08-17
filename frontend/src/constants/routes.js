@@ -5,6 +5,7 @@ export const BACKEND_ROUTES = Object.freeze(
     {
       LOGIN: authRoute + '/login',
       LOGOUT: authRoute + '/logout',
+      REFRESH: authRoute + '/refresh',
       SAGAS: {
         BASE: baseRoute + '/sagas',
         PAGINATED: baseRoute + '/sagas/paginated'
@@ -24,6 +25,7 @@ export const FRONTEND_ROUTES = Object.freeze(
       SAGA_DETAILS: '/saga-details/:sagaId/:sagaType',
       SAGA_DETAILS_SEARCH: '/saga-details',
       SESSION_EXPIRED: '/session-expired',
+      EXPIRE_SESSION: '/expire-session',
       UNAUTHORIZED: '/unauthorized-page'
     }
 );

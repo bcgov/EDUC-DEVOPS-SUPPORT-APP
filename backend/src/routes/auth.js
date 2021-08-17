@@ -5,12 +5,11 @@ const passport = require('passport');
 const express = require('express');
 const auth = require('../components/auth');
 const jsonwebtoken = require('jsonwebtoken');
-const roles = require('../util/constants/roles');
+const roles = require('../components/roles');
 const log = require('../components/logger');
 const HttpStatus = require('http-status-codes');
 
 const {
-  body,
   validationResult
 } = require('express-validator');
 
@@ -67,9 +66,7 @@ router.get('/logout', async (req, res) => {
 });
 
 //refreshes jwt on refresh if refreshToken is valid
-router.post('/refresh', [
-  body('refreshToken').exists()
-], async (req, res) => {
+router.post('/refresh', [], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(HttpStatus.BAD_REQUEST).json({
@@ -106,24 +103,6 @@ router.post('/refresh', [
     }
   }
 
-});
-
-//provides a jwt to authenticated users
-router.get('/token', auth.refreshJWT, (req, res) => {
-
-  const isAuthorizedUser = isValidStaffUserWithRoles(req);
-  const isValidSagaUser = auth.isValidUser(roles.SAGA_DASHBOARD);
-  if (req['user'] && req['user'].refreshToken) {
-    const responseJson = {
-      isAuthorizedUser: isAuthorizedUser,
-      isValidSagaUser: isValidSagaUser
-    };
-    res.status(HttpStatus.OK).json(responseJson);
-  } else {
-    res.status(HttpStatus.UNAUTHORIZED).json({
-      message: 'Not logged in'
-    });
-  }
 });
 
 router.get('/user', (req, res) => {

@@ -5,7 +5,6 @@ import Vue from 'vue';
 import Login from "./components/sessions/Login";
 import { FRONTEND_ROUTES} from "./constants/routes";
 import SagaDetails from "./components/sagas/SagaDetails";
-//import store from './store/index';
 import authStore from './store/modules/auth';
 import SessionExpired from "./components/sessions/SessionExpired";
 import BackendSessionExpired from "./components/sessions/BackendSessionExpired";
@@ -41,15 +40,6 @@ const router = new VueRouter({
       }
     },
     {
-      path: FRONTEND_ROUTES.SAGA_DETAILS_SEARCH,
-      name: 'sagaDetailsSearch',
-      component: SagaDetails,
-      meta: {
-        pageTitle: PAGE_TITLES.SAGA_DETAILS,
-        requiresAuth: true
-      }
-    },
-    {
       path: FRONTEND_ROUTES.LOGIN,
       name: 'login',
       component: Login,
@@ -62,6 +52,14 @@ const router = new VueRouter({
       path: FRONTEND_ROUTES.SESSION_EXPIRED,
       name: 'sessionExpired',
       component: SessionExpired,
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: FRONTEND_ROUTES.EXPIRE_SESSION,
+      name: 'expireSession',
+      component: BackendSessionExpired,
       meta: {
         requiresAuth: false
       }
@@ -89,11 +87,6 @@ const router = new VueRouter({
       meta: {
         requiresAuth: true
       },
-    },
-    {
-      path: '/token-expired',
-      name: 'backend-session-expired',
-      component: BackendSessionExpired
     }
   ],
 });

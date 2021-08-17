@@ -179,14 +179,14 @@
 </template>
 
 <script>
-  import {BACKEND_ROUTES} from "../../constants/routes";
-  import {isValidDate, isValidGuid} from "../../common/validation";
-  import ApiService from '../../common/apiService';
+  import {BACKEND_ROUTES} from '../../constants/routes';
+  import {isValidDate, isValidGuid} from '../../common/validation';
   import alertMixin from '../../mixins/alertMixin';
   import {mapState} from 'vuex';
   import router from '../../router';
   import {DateTimeFormatterBuilder, LocalDate, ResolverStyle}  from '@js-joda/core';
   import {SAGA_STATUS_ENUM} from '../../constants/SagaStatusEnum';
+  import axios from 'axios';
 
   export default {
     name: 'HelloWorld',
@@ -543,7 +543,7 @@
           }
         };
 
-        ApiService.apiAxios
+        axios
           .get(BACKEND_ROUTES.SAGAS.PAGINATED, params)
           .then(response => {
             this.stuckSagaStats[sagaType].count = response.data.totalElements;
@@ -572,8 +572,8 @@
             sagaType: this.selectedSagaType
           }
         };
-        
-        ApiService.apiAxios
+
+        axios
           .get(BACKEND_ROUTES.SAGAS.PAGINATED, params)
           .then(response => {
             this.searchResponse = response.data;
