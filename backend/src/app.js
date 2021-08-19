@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 const log = require('./components/logger');
 const morgan = require('morgan');
 const session = require('express-session');
-const connectRedis = require('connect-redis');
 const express = require('express');
 const passport = require('passport');
 const helmet = require('helmet');
@@ -18,8 +17,6 @@ const apiRouter = express.Router();
 const authRouter = require('./routes/auth');
 const sagaRouter = require('./routes/sagas');
 const promMid = require('express-prometheus-middleware');
-const Redis = require('./util/redis/redis-client');
-Redis.init(); // call the init to initialize appropriate client, and reuse it across the app.
 //initialize app
 const app = express();
 const nocache = require('nocache');
@@ -46,11 +43,6 @@ const logStream = {
   }
 };
 
-const RedisStore = connectRedis(session);
-const dbSession = new RedisStore({
-  client: Redis.getRedisClient(),
-  prefix: 'dosa-sess:',
-});
 const cookie = {
   secure: true,
   httpOnly: true,
@@ -63,8 +55,7 @@ app.use(session({
   secret: config.get('oidc:clientSecret'),
   resave: false,
   saveUninitialized: true,
-  cookie: cookie,
-  store: dbSession
+  cookie: cookie
 }));
 //initialize routing and session. Cookies are now only reachable via requests (not js)
 app.use(passport.initialize());
