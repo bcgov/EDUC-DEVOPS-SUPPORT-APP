@@ -43,11 +43,6 @@ nconf.defaults({
     clientId: process.env.ID,
     clientSecret: process.env.SECRET,
     discovery: process.env.DISCOVERY,
-  },
-  redis: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    password: process.env.REDIS_PASSWORD
   }
 });
 module.exports = nconf;
