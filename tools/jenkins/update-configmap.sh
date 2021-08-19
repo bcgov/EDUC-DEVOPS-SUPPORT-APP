@@ -142,16 +142,16 @@ fi
 echo Creating config map $APP_NAME-backend-config-map
 oc create -n $COMMON_NAMESPACE-$envValue configmap $APP_NAME-backend-config-map --from-literal=UI_PRIVATE_KEY="$UI_PRIVATE_KEY_VAL" --from-literal=SITEMINDER_LOGOUT_ENDPOINT="$siteMinderLogoutUrl" --from-literal=UI_PUBLIC_KEY="$UI_PUBLIC_KEY_VAL" --from-literal=ID=$APP_NAME-soam --from-literal=SECRET=$dosaClientSecret --from-literal=SERVER_FRONTEND=https://$SERVER_FRONTEND --from-literal=ISSUER=DEVOPS_SUPPORT_APPLICATION --from-literal=SOAM_PUBLIC_KEY="$formattedPublicKey" --from-literal=DISCOVERY=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/.well-known/openid-configuration --from-literal=KC_DOMAIN=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID --from-literal=LOG_LEVEL=info --from-literal=REDIS_HOST=redis --from-literal=REDIS_PORT=6379 --from-literal=SESSION_MAX_AGE=$sessionMaxAge --from-literal=TOKEN_EXPIRES_IN=$tokenExpiresIn --from-literal=QUEUE_GROUP_NAME="dosa-node-queue-group" --from-literal=PEN_REQ_BATCH_API_URL=https://pen-reg-batch-api-$PEN_NAMESPACE-$envValue.apps.silver.devops.gov.bc.ca/api/v1/pen-request-batch-saga  --from-literal=STUDENT_PROFILE_API_URL=https://student-profile-saga-api-$PEN_NAMESPACE-$envValue.apps.silver.devops.gov.bc.ca/api/v1/student-profile-saga --from-literal=REPLICATION_API_URL=https://pen-replication-api-$PEN_NAMESPACE-$envValue.apps.silver.devops.gov.bc.ca/api/v1/pen-replication/saga --from-literal=SAGA_ADMIN_ROLE=SAGA_DASHBOARD_ROLE --dry-run -o yaml | oc apply -f -
 echo
-echo Setting environment variables for $APP_NAME-backend-$SOAM_KC_REALM_ID application
-oc -n $COMMON_NAMESPACE-$envValue set env --from=configmap/$APP_NAME-backend-config-map dc/$APP_NAME-backend-$SOAM_KC_REALM_ID
+echo Setting environment variables for $APP_NAME-backend-main application
+oc -n $COMMON_NAMESPACE-$envValue set env --from=configmap/$APP_NAME-backend-config-map dc/$APP_NAME-backend-main
 ###########################################################
 #Setup for dosa-frontend-config-map
 ###########################################################
 echo Creating config map $APP_NAME-frontend-config-map
 oc create -n $COMMON_NAMESPACE-$envValue configmap $APP_NAME-frontend-config-map --from-literal=TZ=$TZVALUE --from-literal=HOST_ROUTE=$BACKEND_ROOT --from-literal=BACKEND_ROOT=https://$BACKEND_ROOT --dry-run -o yaml | oc apply -f -
 echo
-echo Setting environment variables for $APP_NAME-frontend-$SOAM_KC_REALM_ID application
-oc -n $COMMON_NAMESPACE-$envValue set env --from=configmap/$APP_NAME-frontend-config-map dc/$APP_NAME-frontend-$SOAM_KC_REALM_ID
+echo Setting environment variables for $APP_NAME-frontend-main application
+oc -n $COMMON_NAMESPACE-$envValue set env --from=configmap/$APP_NAME-frontend-config-map dc/$APP_NAME-frontend-main
 
 ###########################################################
 #Setup for dosa-flb-sc-config-map
