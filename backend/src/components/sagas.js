@@ -1,6 +1,7 @@
 'use strict';
 
-const config = require('../config/index');
+const {find} = require('lodash');
+
 const {
   logApiError, getBackendToken, getData, putData
 } = require('./utils');
@@ -67,23 +68,14 @@ async function getSagas(req, res) {
         searchCriteriaList: JSON.stringify(search)
       }
     };
-
-    let url;
-    switch (req?.query?.sagaType) {
-      case SAGA_TYPES.PEN_REQUEST_BATCH:
-        url = `${config.get('server:penRequestBatchApi:paginatedUrl')}`;
-        break;
-      case SAGA_TYPES.STUDENT_PROFILE:
-        url = `${config.get('server:studentProfileSagaApi:paginatedUrl')}`;
-        break;
-      case SAGA_TYPES.REPLICATION:
-        url = `${config.get('server:replicationApi:paginatedUrl')}`;
-        break;
+    if(req?.query?.sagaType) {
+      let url = find(SAGA_TYPES, {id:req.query.sagaType}).paginatedUrl;
+      const dataResponse = await getData(getBackendToken(req), url, params);
+      return res.status(200).json(dataResponse);
+    } else {
+      log.error('Missing sagaTypes in query string');
+      return res.status(400).json();
     }
-
-    const dataResponse = await getData(getBackendToken(req), url, params);
-    return res.status(200).json(dataResponse);
-
   } catch (e) {
     logApiError(e, 'getSagas', 'Error occurred while attempting to get sagas :: ' + e);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -94,37 +86,28 @@ async function getSagas(req, res) {
 
 async function getSagaEventsById(req, res) {
   try {
-    let eventUrl;
-    let sagaUrl;
-    switch (req?.query?.sagaType) {
-      case SAGA_TYPES.PEN_REQUEST_BATCH:
-        eventUrl = `${config.get('server:penRequestBatchApi:rootUrl')}/${req.params.id}/saga-events`;
-        sagaUrl = `${config.get('server:penRequestBatchApi:rootUrl')}/${req.params.id}`;
-        break;
-      case SAGA_TYPES.STUDENT_PROFILE:
-        eventUrl = `${config.get('server:studentProfileSagaApi:rootUrl')}/${req.params.id}/events`;
-        sagaUrl = `${config.get('server:studentProfileSagaApi:rootUrl')}/${req.params.id}`;
-        break;
-      case SAGA_TYPES.REPLICATION:
-        eventUrl = `${config.get('server:replicationApi:rootUrl')}/${req.params.id}/events`;
-        sagaUrl = `${config.get('server:replicationApi:rootUrl')}/${req.params.id}`;
-        break;
+    if(req?.query?.sagaType) {
+      let eventUrl = find(SAGA_TYPES, {id: req.query.sagaType}).eventUrl.replace('%s', req.params.id);
+      let sagaUrl = `${find(SAGA_TYPES, {id: req.query.sagaType}).rootUrl}/${req.params.id}`;
+      Promise.all([
+        getData(getBackendToken(req), eventUrl),
+        getData(getBackendToken(req), sagaUrl)
+      ]).then(([eventData, sagaData]) => {
+        if (eventData && Array.isArray(eventData)) {
+          eventData.push(sagaData);
+          let responseData = {
+            eventData: eventData,
+            sagaData: sagaData
+          };
+          return res.status(200).json(responseData);
+        } else {
+          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json();
+        }
+      });
+    } else {
+      log.error('Missing sagaTypes in query string');
+      return res.status(400).json();
     }
-    Promise.all([
-      getData(getBackendToken(req), eventUrl),
-      getData(getBackendToken(req), sagaUrl)
-    ]).then(([eventData, sagaData]) => {
-      if(eventData && Array.isArray(eventData)) {
-        eventData.push(sagaData);
-        let responseData = {
-          eventData: eventData,
-          sagaData: sagaData
-        };
-        return res.status(200).json(responseData);
-      } else {
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json();
-      }
-    });
   } catch(e) {
     logApiError(e, 'getSagaEventsById', 'Error occurred while attempting to get saga events :: ' + e);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -135,20 +118,14 @@ async function getSagaEventsById(req, res) {
 
 async function updateSaga(req, res) {
   try {
-    let url;
-    switch (req?.body?.sagaType) {
-      case SAGA_TYPES.PEN_REQUEST_BATCH:
-        url = `${config.get('server:penRequestBatchApi:rootUrl')}/${req.params.id}`;
-        break;
-      case SAGA_TYPES.STUDENT_PROFILE:
-        url = `${config.get('server:studentProfileSagaApi:rootUrl')}/${req.params.id}`;
-        break;
-      case SAGA_TYPES.REPLICATION:
-        url = `${config.get('server:replicationApi:rootUrl')}/${req.params.id}`;
-        break;
+    if(req?.query?.sagaType){
+      let url = `${find(SAGA_TYPES, {id: req.query.sagaType}).rootUrl}/${req.params.id}`;
+      const dataResponse = await putData(getBackendToken(req), url, req.body?.sagaObject);
+      return res.status(200).json(dataResponse);
+    } else {
+      log.error('Missing sagaTypes in query string');
+      return res.status(400).json();
     }
-    const dataResponse = await putData(getBackendToken(req), url, req.body?.sagaObject);
-    return res.status(200).json(dataResponse);
   } catch(e) {
     logApiError(e, 'updateSaga', 'Error occurred while attempting to update saga :: ' + e);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({

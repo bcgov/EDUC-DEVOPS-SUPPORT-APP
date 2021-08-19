@@ -169,7 +169,7 @@
       isValidGuid,
       rerunSaga() {
         this.sagaObject.payload = this.modifiedSagaPayload;
-        axios.post(`${BACKEND_ROUTES.SAGAS.BASE}/${this.id}`, {sagaObject: this.sagaObject, sagaType: this.sagaType})
+        axios.put(`${BACKEND_ROUTES.SAGAS.BASE}/${this.id}`, {sagaObject: this.sagaObject, sagaType: this.sagaType})
         .then(() => {
           this.setSuccessAlert('The saga payload has been successfully updated. Refresh the page to watch for updates.');
           this.getEvents();

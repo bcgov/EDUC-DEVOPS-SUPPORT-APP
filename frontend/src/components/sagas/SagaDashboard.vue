@@ -8,7 +8,7 @@
         </v-row>
       </v-col>
       <v-col
-        v-for="(type, key) in stuckSagaStats"
+        v-for="(type, key) in sagaTypes"
         v-bind:key="key"
         cols="12" md="4">
         <v-card
@@ -20,19 +20,19 @@
           <v-list-item three-line>
             <v-list-item-content>
               <div class="text-overline mb-4">
-                {{ type.title }}
+                {{ type.title }} Saga Api
               </div>
               <v-progress-circular
-                v-if="statsLoading[key]"
+                v-if="showLoading(type.value)"
                 indeterminate
               ></v-progress-circular>
               <v-list-item-title v-else class="text-h5 mb-1">
-                {{ type.count }}
+                {{ type.stuckCount }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-card-actions>
-            <v-btn @click="viewStuck(key)">View Sagas</v-btn>
+            <v-btn @click="viewStuck(type.value)">View Sagas</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -187,9 +187,10 @@
   import {DateTimeFormatterBuilder, LocalDate, ResolverStyle}  from '@js-joda/core';
   import {SAGA_STATUS_ENUM} from '../../constants/SagaStatusEnum';
   import axios from 'axios';
+  import {find} from 'lodash';
 
   export default {
-    name: 'HelloWorld',
+    name: 'Dashboard',
     mixins: [alertMixin],
     data: () => ({
       sagaHeaders: [
@@ -209,6 +210,8 @@
         {
           value:'penRequestBatch',
           text: 'Pen Request Batch',
+          isLoading: false,
+          stuckCount: null,
           sagaNames: [
             {
               value: 'PEN_REQUEST_BATCH_ARCHIVE_AND_RETURN_SAGA',
@@ -277,6 +280,8 @@
         {
           value: 'studentProfile',
           text: 'Student Profile',
+          isLoading: false,
+          stuckCount: null,
           sagaNames: [
             {
               value: 'STUDENT_PROFILE_COMPLETE_SAGA',
@@ -388,6 +393,8 @@
         {
           value: 'replication',
           text: 'Replication',
+          isLoading: false,
+          stuckCount: null,
           sagaNames: [
             {
               value: 'PEN_REPLICATION_STUDENT_UPDATE_SAGA',
@@ -443,33 +450,12 @@
       ],
       searchCriteria: {'createDate': {}, 'updateDate': {}},
       searchLoading: false,
-      statsLoading: {
-        'penRequestBatch': false,
-        'studentProfile': false,
-        'replication': false
-      },
-      stuckSagaStats: {
-        'penRequestBatch': {
-          title: 'Pen Request Batch Api',
-          count: null
-        },
-        'studentProfile': {
-          title: 'Student Profile Saga Api',
-          count: null
-        },
-        'replication': {
-          title: 'Replication Api',
-          count: null
-        }
-      },
       searchResponse: [],
       pageNumber: 1
       
     }),
     created() {
-      this.getStuckStats('penRequestBatch');
-      this.getStuckStats('studentProfile');
-      this.getStuckStats('replication')
+      this.sagaTypes.forEach(x => this.getStuckStats(x.value));
     },
     watch: {
       pageNumber: {
@@ -533,7 +519,7 @@
         return result;
       },
       getStuckStats(sagaType) {
-        this.statsLoading[sagaType] = true;
+        find(this.sagaTypes, {value: sagaType}).isLoading = true;
         let params = {
           params: {
             pageNumber: 0,
@@ -546,14 +532,14 @@
         axios
           .get(BACKEND_ROUTES.SAGAS.PAGINATED, params)
           .then(response => {
-            this.stuckSagaStats[sagaType].count = response.data.totalElements;
+            find(this.sagaTypes, {value: sagaType}).stuckCount = response.data.totalElements;
           })
           .catch(error => {
             this.setFailureAlert('An error occurred while loading saga statuses. Please try again later.');
             console.error(error.response);
           })
           .finally(() => {
-            this.statsLoading = false;
+            find(this.sagaTypes, {value: sagaType}).isLoading = false;
           });
       },
       openSaga(saga) {
@@ -586,6 +572,9 @@
             this.searchLoading = false;
             document.getElementById('resultsTable').scrollIntoView({behavior: 'smooth'});
           });
+      },
+      showLoading(sagaType) {
+        return find(this.sagaTypes, {value: sagaType}).isLoading;
       },
       async viewStuck(type) {
         this.$set(this.searchCriteria, 'status', [SAGA_STATUS_ENUM.IN_PROGRESS, SAGA_STATUS_ENUM.STARTED]);

@@ -7,6 +7,6 @@ const { getSagas, getSagaEventsById, updateSaga } = require('../components/sagas
 
 router.get('/paginated', auth.isValidSagaAdmin, extendSession, getSagas);
 router.get('/:id', auth.isValidSagaAdmin, extendSession, getSagaEventsById);
-router.post('/:id', auth.isValidSagaAdmin, extendSession, updateSaga);
+router.put('/:id', auth.isValidSagaAdmin, extendSession, updateSaga);
 
 module.exports = router;
