@@ -43,8 +43,8 @@ pipeline{
     MAX_CPU_BE = "100m"
     MIN_MEM_BE = "200Mi"
     MAX_MEM_BE = "250Mi"
-    DC_URL_FRONTEND = "https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/master/tools/openshift/frontend-static.dc.ocp4.yaml"
-    DC_URL_BACKEND = "https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/master/tools/openshift/backend.dc.ocp4.yaml"
+    DC_URL_FRONTEND = "https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/main/tools/openshift/frontend-static.dc.ocp4.yaml"
+    DC_URL_BACKEND = "https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/main/tools/openshift/backend.dc.ocp4.yaml"
 
   }
 
@@ -74,7 +74,7 @@ pipeline{
                       Backend: {
                         try{
                           echo "Building backend..."
-                          def bcBackend = openshift.process('-f', 'https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/master/tools/openshift/backend.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
+                          def bcBackend = openshift.process('-f', 'https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/main/tools/openshift/backend.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
                           openshift.apply(bcBackend).narrow('bc').startBuild('-w').logs('-f')
 
                           openshift.tag("${REPO_NAME}-backend:latest", "${REPO_NAME}-backend:${JOB_NAME}")
@@ -86,12 +86,12 @@ pipeline{
                       Frontend: {
                         try {
                           echo "Building frontend..."
-                          def bcFrontend = openshift.process('-f', 'https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/master/tools/openshift/frontend.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
+                          def bcFrontend = openshift.process('-f', 'https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/main/tools/openshift/frontend.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "SOURCE_REPO_URL=${SOURCE_REPO_URL}", "SOURCE_REPO_REF=${SOURCE_REPO_REF}")
 
                           openshift.apply(bcFrontend).narrow('bc').startBuild('-w').logs('-f')
                           openshift.tag("${REPO_NAME}-frontend:latest", "${REPO_NAME}-frontend:${JOB_NAME}")
 
-                          def bcFrontendStatic = openshift.process('-f', 'https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/master/tools/openshift/frontend-static.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "NAMESPACE=${TOOLS}")
+                          def bcFrontendStatic = openshift.process('-f', 'https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/main/tools/openshift/frontend-static.bc.yaml', "REPO_NAME=${REPO_NAME}", "JOB_NAME=${JOB_NAME}", "NAMESPACE=${TOOLS}")
                           openshift.apply(bcFrontendStatic).narrow('bc').startBuild('-w').logs('-f')
                           openshift.tag("${REPO_NAME}-frontend-static:latest", "${REPO_NAME}-frontend-static:${JOB_NAME}")
                         } catch(e) {
