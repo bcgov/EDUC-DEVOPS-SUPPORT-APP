@@ -19,6 +19,7 @@ export const BACKEND_ROUTES = Object.freeze(
 
 export const FRONTEND_ROUTES = Object.freeze(
     {
+      ERROR: '/error',
       LOGIN: '/login',
       LOGOUT: '/logout',
       SAGA_DASHBOARD: '/saga-dashboard',

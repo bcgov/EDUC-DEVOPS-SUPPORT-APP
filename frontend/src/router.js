@@ -65,7 +65,7 @@ const router = new VueRouter({
       }
     },
     {
-      path: '/unauthorized-page',
+      path: FRONTEND_ROUTES.UNAUTHORIZED,
       name: 'unauthorized-page',
       component: UnAuthorizedPage,
       meta: {
@@ -73,7 +73,7 @@ const router = new VueRouter({
       }
     },
     {
-      path: '/error',
+      path: FRONTEND_ROUTES.ERROR,
       name: 'error',
       component: ErrorPage,
       meta: {
@@ -96,9 +96,6 @@ router.beforeEach((to, from, next) => {
     if (authStore.state.loginState) {
       if(!authStore.state.isAuthorizedUser) {
         next(FRONTEND_ROUTES.UNAUTHORIZED);
-      }
-      else if (to.path === FRONTEND_ROUTES.LOGIN) {
-        next(FRONTEND_ROUTES.SAGA_DASHBOARD);
       }
       else {
         next();
