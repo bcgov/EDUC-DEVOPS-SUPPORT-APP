@@ -26,7 +26,7 @@ TKN=$(curl -s \
 
 echo
 echo Creating SAGA_DASHBOARD_ROLE role
-curl -sX POST "https://$SOAM_KC/auth/admin/realms/$SOAM_KC_REALM_ID/client-scopes" \
+curl -sX POST "https://$SOAM_KC/auth/admin/realms/$SOAM_KC_REALM_ID/roles" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TKN" \
   -d "{\"name\" : \"SAGA_DASHBOARD_ROLE\",\"description\" : \"Allows access to devops saga dashboard\",\"composite\" : false,\"clientRole\" : false,\"containerId\" : \"$SOAM_KC_REALM_ID\"}"

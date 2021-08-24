@@ -1,5 +1,5 @@
 export const ROLES = Object.freeze(
   {
-    DOSA_ADMIN: "STUDENT_ADMIN"
+    DOSA_ADMIN: "SAGA_DASHBOARD_ROLE"
   }
 );

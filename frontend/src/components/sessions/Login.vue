@@ -21,7 +21,6 @@
 <script>
   import {BACKEND_ROUTES} from '../../constants/routes';
   import {mapMutations} from 'vuex';
-  //import router from '../router';
 
   export default {
     name: 'Login',
