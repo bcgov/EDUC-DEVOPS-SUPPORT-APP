@@ -57,6 +57,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: cookie
 }));
+app.use(require('./routes/health-check').router);
 //initialize routing and session. Cookies are now only reachable via requests (not js)
 app.use(passport.initialize());
 app.use(passport.session());
