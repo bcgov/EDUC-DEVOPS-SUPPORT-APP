@@ -6,6 +6,7 @@ const config = require('../config/index');
 const lodash = require('lodash');
 const log = require('./logger');
 const fsStringify = require('fast-safe-stringify');
+const {ApiError} = require('./error');
 
 let discovery = null;
 
