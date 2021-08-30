@@ -62,7 +62,7 @@ async function logApiError(e, functionName, message) {
   } else if (message) {
     log.error(message);
   } else {
-    log.error(functionName, ' Error', e.stack);
+    log.error(functionName, ' Error', e);
   }
 }
 
