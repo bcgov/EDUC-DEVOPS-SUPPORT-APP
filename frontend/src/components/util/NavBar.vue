@@ -94,7 +94,7 @@ export default {
     return {
       items: [
         {
-          icon: 'mdi-chart-box',
+          icon: 'mdi-poll',
           title: 'Saga Dashboard',
           ref: FRONTEND_ROUTES.SAGA_DASHBOARD
         }
