@@ -11,7 +11,7 @@ def performUIDeploy(String hostRoute, String stageEnv, String projectEnv, String
 
         echo "Processing DeploymentConfig ${appName}-backend..."
         def dcBackendTemplate = openshift.process('-f',
-          "${rawApiDcURLBackend}",
+          "${backendDCRaw}",
           "REPO_NAME=${repoName}",
           "JOB_NAME=${jobName}",
           "NAMESPACE=${projectEnv}",
@@ -30,7 +30,7 @@ def performUIDeploy(String hostRoute, String stageEnv, String projectEnv, String
 
         echo "Processing DeploymentConfig ${appName}-frontend-static..."
         def dcFrontendStaticTemplate = openshift.process('-f',
-          "${rawApiDcURLFrontend}",
+          "${frontendDCRaw}",
           "REPO_NAME=${repoName}",
           "JOB_NAME=${jobName}",
           "NAMESPACE=${projectEnv}",
