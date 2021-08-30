@@ -20,7 +20,7 @@
           <v-list-item three-line>
             <v-list-item-content>
               <div class="text-overline mb-4">
-                {{ type.title }} Saga Api
+                {{ type.text }} Saga Api
               </div>
               <v-progress-circular
                 v-if="showLoading(type.value)"

@@ -7,6 +7,7 @@ pipeline{
     extJSHelper = '';
     NAMESPACE='75e61b'
     COMMON_NAMESPACE='75e61b'
+    PEN_NAMESPACE='8878b4'
     STAGING_ENV = 'Dev'
     TOOLS = '75e61b-tools'
     DEV = '75e61b-dev'
@@ -60,7 +61,7 @@ pipeline{
             echo 'DEBUG - All pipeline environment variables:'
             echo sh(returnStdout: true, script: 'env')
           }
-          sh "wget -O - https://raw.githubusercontent.com/bcgov/EDUC-INFRA-COMMON/master/openshift/common-deployment/deployHelpers.js > deployHelpers.js"
+          sh "wget -O - https://raw.githubusercontent.com/bcgov/EDUC-DEVOPS-SUPPORT-APP/main/tools/jenkins/deployHelpers.js > deployHelpers.js"
           extJSHelper = evaluate readFile('deployHelpers.js')
         }
       }
@@ -141,7 +142,7 @@ pipeline{
 	stage('Promote and configure DEV') {
       steps{
         script{
-            extJSHelper.performUIDeploy(DEV_HOST_ROUTE, STAGING_ENV, TARGET_ENVIRONMENT, REPO_NAME, APP_NAME, JOB_NAME, TAG, TOOLS, TARGET_ENVIRONMENT, APP_DOMAIN, DC_URL_FRONTEND, DC_URL_BACKEND, MIN_REPLICAS_FE, MAX_REPLICAS_FE, MIN_CPU_FE, MAX_CPU_FE, MIN_MEM_FE, MAX_MEM_FE, MIN_REPLICAS_BE, MAX_REPLICAS_BE, MIN_CPU_BE, MAX_CPU_BE, MIN_MEM_BE, MAX_MEM_BE, TARGET_ENV, NAMESPACE, COMMON_NAMESPACE, "", "", "")
+            extJSHelper.performUIDeploy(DEV_HOST_ROUTE, STAGING_ENV, TARGET_ENVIRONMENT, REPO_NAME, APP_NAME, JOB_NAME, TAG, TOOLS, TARGET_ENVIRONMENT, APP_DOMAIN, DC_URL_FRONTEND, DC_URL_BACKEND, MIN_REPLICAS_FE, MAX_REPLICAS_FE, MIN_CPU_FE, MAX_CPU_FE, MIN_MEM_FE, MAX_MEM_FE, MIN_REPLICAS_BE, MAX_REPLICAS_BE, MIN_CPU_BE, MAX_CPU_BE, MIN_MEM_BE, MAX_MEM_BE, TARGET_ENV, NAMESPACE, COMMON_NAMESPACE, PEN_NAMESPACE)
         }
       }
       post{
