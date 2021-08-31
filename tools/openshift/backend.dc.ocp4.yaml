@@ -77,7 +77,7 @@ objects:
               memory: "${MAX_MEM}"
         volumes:
         - name: log-storage
-            emptyDir: {}
+          emptyDir: {}
         - name: tls-certs
           secret:
             secretName: dosa-backend-cert
