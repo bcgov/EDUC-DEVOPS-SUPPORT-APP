@@ -75,53 +75,10 @@ objects:
             limits:
               cpu: "${MAX_CPU}"
               memory: "${MAX_MEM}"
-        - image: docker-remote.artifacts.developer.gov.bc.ca/fluent/fluent-bit:1.5.7
-          name: "${APP_NAME}-${JOB_NAME}-fluent-bit-sidecar"
-          imagePullPolicy: Always
-          imagePullSecrets:
-            - name: artifactory-creds
-          volumeMounts:
-            - name: log-storage
-              mountPath: /mnt/log
-            - name: flb-sc-config-volume
-              mountPath: /fluent-bit/etc/
-          readinessProbe:
-            tcpSocket:
-              port: 2020
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 5
-            successThreshold: 1
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 2020
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 5
-            successThreshold: 1
-          ports:
-            - containerPort: 2020
-              protocol: TCP
-              name: metrics
-          resources:
-            requests:
-              cpu: "5m"
-              memory: "32Mi"
-            limits:
-              cpu: "15m"
-              memory: "64Mi"
         volumes:
-        - name: log-storage
-          emptyDir: {}
         - name: tls-certs
           secret:
             secretName: student-admin-backend-cert
-        - name: flb-sc-config-volume
-          configMap:
-            name: "${APP_NAME}-flb-sc-config-map"
     test: false
     triggers:
     - type: ConfigChange
