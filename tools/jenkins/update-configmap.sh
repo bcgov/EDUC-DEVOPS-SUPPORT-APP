@@ -15,7 +15,6 @@ else
 fi
 SOAM_KC_LOAD_USER_ADMIN=$(oc -n $COMMON_NAMESPACE-$envValue -o json get secret sso-admin-${envValue} | sed -n 's/.*"username": "\(.*\)"/\1/p' | base64 --decode)
 SOAM_KC_LOAD_USER_PASS=$(oc -n $COMMON_NAMESPACE-$envValue -o json get secret sso-admin-${envValue} | sed -n 's/.*"password": "\(.*\)",/\1/p' | base64 --decode)
-SPLUNK_TOKEN=$(oc -n $COMMON_NAMESPACE-$envValue -o json get configmaps ${APP_NAME}-${envValue}-setup-config | sed -n "s/.*\"SPLUNK_TOKEN_${APP_NAME_UPPER}\": \"\(.*\)\"/\1/p")
 
 echo Fetching SOAM token
 TKN=$(curl -s \
@@ -154,44 +153,3 @@ echo
 echo Setting environment variables for $APP_NAME-frontend-main application
 oc -n $COMMON_NAMESPACE-$envValue set env --from=configmap/$APP_NAME-frontend-config-map dc/$APP_NAME-frontend-main
 
-###########################################################
-#Setup for dosa-flb-sc-config-map
-###########################################################
-SPLUNK_URL="gww.splunk.educ.gov.bc.ca"
-FLB_CONFIG="[SERVICE]
-   Flush        1
-   Daemon       Off
-   Log_Level    debug
-   HTTP_Server   On
-   HTTP_Listen   0.0.0.0
-   Parsers_File parsers.conf
-[INPUT]
-   Name   tail
-   Path   /mnt/log/*
-   Exclude_Path *.gz,*.zip
-   Parser docker
-   Mem_Buf_Limit 20MB
-[FILTER]
-   Name record_modifier
-   Match *
-   Record hostname \${HOSTNAME}
-[OUTPUT]
-   Name   stdout
-   Match  *
-[OUTPUT]
-   Name  splunk
-   Match *
-   Host  $SPLUNK_URL
-   Port  443
-   TLS         On
-   TLS.Verify  Off
-   Message_Key $APP_NAME
-   Splunk_Token $SPLUNK_TOKEN
-"
-PARSER_CONFIG="
-[PARSER]
-    Name        docker
-    Format      json
-"
-echo Creating config map $APP_NAME-flb-sc-config-map
-oc create -n $COMMON_NAMESPACE-$envValue configmap $APP_NAME-flb-sc-config-map --from-literal=fluent-bit.conf="$FLB_CONFIG" --from-literal=parsers.conf="$PARSER_CONFIG" --dry-run -o yaml | oc apply -f -
