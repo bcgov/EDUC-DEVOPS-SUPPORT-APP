@@ -6,22 +6,23 @@ const {
   logApiError, getBackendToken, getData, putData
 } = require('./utils');
 const HttpStatus = require('http-status-codes');
+const log = require('./logger');
 const { FILTER_OPERATION, VALUE_TYPE, CONDITION } = require('../util/constants');
 const { SAGA_TYPES } = require('../util/constants/sagaTypes');
 
 async function getSagas(req, res) {
   try {
-  let searchListCriteria = [];
+    let searchListCriteria = [];
 
-  if(req.query.searchCriteriaList) {
-    let searchQueries = JSON.parse(req.query.searchCriteriaList);
+    if(req.query.searchCriteriaList) {
+      let searchQueries = JSON.parse(req.query.searchCriteriaList);
 
-    Object.keys(searchQueries).forEach(element => {
-      if(!searchQueries[element] || (Array.isArray(searchQueries[element]) && Object.keys(searchQueries[element]).length === 0)) return; //do not add to search if null value
-      let operation = FILTER_OPERATION.IN;
-      let valueType = VALUE_TYPE.STRING;
+      Object.keys(searchQueries).forEach(element => {
+        if(!searchQueries[element] || (Array.isArray(searchQueries[element]) && Object.keys(searchQueries[element]).length === 0)) return; //do not add to search if null value
+        let operation = FILTER_OPERATION.IN;
+        let valueType = VALUE_TYPE.STRING;
 
-      switch (element) {
+        switch (element) {
         case 'createDate':
         case 'updateDate':
           if(!searchQueries[element].from) return;
@@ -51,15 +52,15 @@ async function getSagas(req, res) {
           if(Object.keys(searchQueries[element]).length === 0) return;
           searchQueries[element] = searchQueries[element].join(',');
           break;
-      }
-      searchListCriteria.push({key: element, condition: CONDITION.AND, operation: operation, value: searchQueries[element], valueType: valueType});
-    });
-  }
-  const search = [
-    {
-      searchCriteriaList: searchListCriteria
+        }
+        searchListCriteria.push({key: element, condition: CONDITION.AND, operation: operation, value: searchQueries[element], valueType: valueType});
+      });
     }
-  ];
+    const search = [
+      {
+        searchCriteriaList: searchListCriteria
+      }
+    ];
     const params = {
       params: {
         pageNumber: req?.query?.pageNumber,
