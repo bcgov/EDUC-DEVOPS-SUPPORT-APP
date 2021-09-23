@@ -74,7 +74,7 @@ async function getSagas(req, res) {
       const dataResponse = await getData(getBackendToken(req), url, params);
       return res.status(200).json(dataResponse);
     } else {
-      log.error('Missing sagaTypes in query string');
+      log.error('getSagas: Missing sagaType in query string');
       return res.status(400).json();
     }
   } catch (e) {
@@ -106,7 +106,7 @@ async function getSagaEventsById(req, res) {
         }
       });
     } else {
-      log.error('Missing sagaTypes in query string');
+      log.error('getSagaEventsById: Missing sagaType in query string');
       return res.status(400).json();
     }
   } catch(e) {
@@ -119,12 +119,12 @@ async function getSagaEventsById(req, res) {
 
 async function updateSaga(req, res) {
   try {
-    if(req?.query?.sagaType){
-      let url = `${find(SAGA_TYPES, {id: req.query.sagaType}).rootUrl}/${req.params.id}`;
+    if(req?.body?.sagaType){
+      let url = `${find(SAGA_TYPES, {id: req.body.sagaType}).rootUrl}/${req.params.id}`;
       const dataResponse = await putData(getBackendToken(req), url, req.body?.sagaObject);
       return res.status(200).json(dataResponse);
     } else {
-      log.error('Missing sagaTypes in query string');
+      log.error('updateSaga: Missing sagaType in query string');
       return res.status(400).json();
     }
   } catch(e) {
