@@ -502,7 +502,7 @@
           .toFormatter(ResolverStyle.STRICT);
       },
       clearSearchCriteria() {
-        this.searchCriteria = {};
+        this.searchCriteria = {'createDate': {}, 'updateDate': {}};
       },
       formatDate(datetime, from='uuuuMMdd', to='uuuu/MM/dd') {
         const fromFormatter = this.getDateFormatter(from);
