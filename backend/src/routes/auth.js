@@ -123,7 +123,7 @@ router.get('/user', (req, res) => {
   }
   const userName = {
     userName: userToken['idir_username'],
-    userGuid: userToken.preferred_username.toUpperCase(),
+    userGuid: userToken.idir_guid.toUpperCase(),
     userRoles: userToken.realm_access.roles,
     displayName: userToken['display_name']
   };
